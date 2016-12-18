@@ -50,10 +50,12 @@ export default {
   //     // return this.song_shifted
   //   }
   // },
+  created () {
+    this.formatInput()
+  },
   watch: {
     items: {
       handler: function () {
-        this.formatInput()
       },
       deep: true
     }
@@ -63,15 +65,18 @@ export default {
       this.song_shifted = transposeUserKeys(this.items.old_key, this.items.new_key, this.song)
     },
     formatInput () {
-      let inputArray = []
+      // let inputArray = []
+      let lines = this.items.song.split('\n')
+      // console.log(lines)
 
-      for (var i = 0; i < this.items.song.length; i++) {
-        inputArray.push(this.items.song[i])
+      for (var i = 0; i < lines.length; i++) {
+        // inputArray.push(this.items.song[i])
         // if (this.items.song[i] !== ' ') {
         // }
+        // console.log(lines[i])
       }
 
-      console.log(inputArray)
+      // console.log(inputArray)
 
       // this.items.song_shifted = inputArray
     }
