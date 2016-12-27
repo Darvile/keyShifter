@@ -95,30 +95,47 @@ function generateKeyTones (key) {
   return newKeys
 }
 
-function shiftNote (oldKey, newKey, note) {
+function shiftNote (oldKey, newKey, oldNote) {
   let oldTones = generateKeyTones(oldKey)
   let newTones = generateKeyTones(newKey)
+  let newNote
   let index
 
-  index = oldTones.indexOf(note)
+  // this should deliver the new note complete
 
-  // console.log('oldTones', oldTones)
-  // console.log('newTones', newTones)
-  // console.log('oldNote', note)
-  console.log('newNote', newTones[index])
+  let oldNoteFirstPart
+  let oldNoteLastPart
 
-  return newTones[index]
+  if (oldNote.length > 1 && oldNote[1] === '#') {
+    oldNoteFirstPart = oldNote.split['#'][0] + '#'
+    oldNoteLastPart = oldNote.split['#'][1]
+  } else {
+    oldNoteFirstPart = oldNote[0]
+    oldNoteLastPart = oldNote.slice(1, oldNote.length)
+  }
+
+  index = oldTones.indexOf(oldNoteFirstPart)
+  newNote = newTones[index] + oldNoteLastPart
+
+  // console.log('oldNote', oldNote)
+  // console.log('oldfirstpart', oldNoteFirstPart)
+  // // console.log('index', index)
+  // console.log('newNote', newNote)
+
+  return newNote
 }
 
-// shiftNote('Dm', 'C', 'D')
+shiftNote('Dm', 'C', 'D')
 
-function shiftSong (oldkey, newKey, theSong) {
+export function shiftSong (oldkey, newKey, theSong) {
   let songArray = splitSongInArrays(theSong)
   let chordLines = []
   let lyricsLines = []
   let oldNotes = []
-  let newNotes = []
-  let newSong
+  // let newNotes = []
+  let newSong = theSong.split('\n')
+
+  console.log(theSong)
 
   for (var i = songArray.length - 1; i >= 0; i--) {
     if (isChordLine(songArray[i])) {
@@ -132,55 +149,102 @@ function shiftSong (oldkey, newKey, theSong) {
   oldNotes = [].concat.apply([], oldNotes)
   oldNotes = removeDuplicates(oldNotes)
 
-  for (var j = 0; j < oldNotes.length; j++) {
-    let oldNoteFirstPart
-    let oldNoteLastPart
+  // for (var j = 0; j < oldNotes.length; j++) {
+  //   let oldNoteFirstPart
+  //   let oldNoteLastPart
 
-    // get the new note and assembly
-    if (oldNotes[j].length > 1 && oldNotes[j][1] === '#') {
-      oldNoteFirstPart = oldNotes[j].split['#'][0] + '#'
-      oldNoteLastPart = oldNotes[j].split['#'][1]
-    } else {
-      oldNoteFirstPart = oldNotes[j][0]
-      oldNoteLastPart = oldNotes[j].slice(1, oldNotes[j].length)
-    }
+  //   // get the new note and assembly
+  //   if (oldNotes[j].length > 1 && oldNotes[j][1] === '#') {
+  //     oldNoteFirstPart = oldNotes[j].split['#'][0] + '#'
+  //     oldNoteLastPart = oldNotes[j].split['#'][1]
+  //   } else {
+  //     oldNoteFirstPart = oldNotes[j][0]
+  //     oldNoteLastPart = oldNotes[j].slice(1, oldNotes[j].length)
+  //   }
+  //   // newNotes.push(shiftNote(oldkey, newKey, oldNoteFirstPart) + oldNoteLastPart)
+  // }
 
-    newNotes.push(shiftNote(oldkey, newKey, oldNoteFirstPart) + oldNoteLastPart)
-  }
-
+  // console.log('newSong', newSong)
   // console.log('chordLines', chordLines)
   // console.log('lyricsLines', lyricsLines)
-  console.log('oldNotes', oldNotes)
-  console.log('newNotes', newNotes)
 
-  return newSong + newNotes
+  for (var k = 0; k <= newSong.length; k++) {
+    if (chordLines.includes(k)) {
+      for (var m = oldNotes.length - 1; m >= 0; m--) {
+        // console.log(newSong[k])
+        // console.log('oldNotes', oldNotes[m])
+
+        var replace = oldNotes[m]
+        var re = new RegExp(replace, 'g')
+
+        newSong[k] = newSong[k].replace(re, shiftNote(oldkey, newKey, replace))
+        // console.log('new', newSong[k])
+      }
+      // loop through each chordline
+      // for (var l = 0; l < newSong[k].length; l++) {
+      //   if (newSong[k][l].length > 1 && newSong[k][l][1] === '#') {
+      //     newSong[k][l].replace(newSong[k][l], shiftNote(oldkey, newKey, newSong[k][l][0] + '#'))
+      //   } else {
+      //     console.log('dam', newSong[k][l])
+      //     newSong[k][l].replace(newSong[k][l][0], shiftNote(oldkey, newKey, newSong[k][l][0]))
+      //   }
+      // }
+    }
+  }
+
+  // loop through the old notes
+  // for (var j = 0; j < oldNotes.length; j++) {
+    // let oldNoteFirstPart
+    // let oldNoteLastPart
+
+    // loop through old song
+    // get the new note and assembly
+    // if (oldNotes[j].length > 1 && oldNotes[j][1] === '#') {
+    //   // oldNoteFirstPart = oldNotes[j].split['#'][0] + '#'
+    //   // oldNoteLastPart = oldNotes[j].split['#'][1]
+    // } else {
+    //   // oldNoteFirstPart = oldNotes[j][0]
+    //   // oldNoteLastPart = oldNotes[j].slice(1, oldNotes[j].length)
+    // }
+
+    // newNotes.push(shiftNote(oldkey, newKey, oldNoteFirstPart) + oldNoteLastPart)
+  // }
+
+  // console.log('newSong', newSong)
+  // console.log('chordLines', chordLines)
+  // console.log('lyricsLines', lyricsLines)
+  // console.log('songArray', songArray)
+  // console.log('oldNotes', oldNotes)
+  // console.log('newNotes', newNotes)
+
+  return newSong.join()
   // return newUserKeys
   // console.log('newUserKeys', newUserKeys)
 }
 
 shiftSong('C', 'B', song)
 
-export function transposeUserKeys (oldkey, newKey, userKeys) {
-  // var oldKeys = generateKeyTones(oldkey)
-  // var newKeys = generateKeyTones(newKey)
-  // var newUserKeys = []
-  // var indexNote = 0
+// export function transposeUserKeys (oldkey, newKey, userKeys) {
+//   // var oldKeys = generateKeyTones(oldkey)
+//   // var newKeys = generateKeyTones(newKey)
+//   // var newUserKeys = []
+//   // var indexNote = 0
 
-  // for (var i = 0; i < userKeys.length; i++) {
-  //   for (var j = 0; j < userKeys[i].length; j++) {
-  //     if (userKeys[i][j] === 'b') {
-  //       userKeys[i] = userKeys[i][0]
-  //       indexNote = oldKeys.indexOf(userKeys[i]) - 1
-  //       console.log(userKeys[i])
-  //     } else {
-  //       indexNote = oldKeys.indexOf(userKeys[i])
-  //     }
-  //   }
-  //   newUserKeys.push(newKeys[indexNote])
-  // }
+//   // for (var i = 0; i < userKeys.length; i++) {
+//   //   for (var j = 0; j < userKeys[i].length; j++) {
+//   //     if (userKeys[i][j] === 'b') {
+//   //       userKeys[i] = userKeys[i][0]
+//   //       indexNote = oldKeys.indexOf(userKeys[i]) - 1
+//   //       console.log(userKeys[i])
+//   //     } else {
+//   //       indexNote = oldKeys.indexOf(userKeys[i])
+//   //     }
+//   //   }
+//   //   newUserKeys.push(newKeys[indexNote])
+//   // }
 
-  // return newUserKeys
-  // console.log('newUserKeys', newUserKeys)
-}
+//   // return newUserKeys
+//   // console.log('newUserKeys', newUserKeys)
+// }
 
-// console.log(transposeUserKeys('E', 'F', ['D', 'A', 'G']))
+// // console.log(transposeUserKeys('E', 'F', ['D', 'A', 'G']))

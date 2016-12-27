@@ -18,6 +18,7 @@
           <select name="new-key" id="" class="form-control" v-model="items.new_key">
             <option v-for="key in items.keys">{{ key }}</option>
           </select>
+          <button @click="startShift">Shift Song</button>
         </div>
 
         <div class="col-md-5">
@@ -30,14 +31,26 @@
 </template>
 
 <script>
-import {transposeUserKeys} from '../core'
+// import {transposeUserKeys} from '../core'
+import {shiftSong} from '../core'
 
 export default {
   name: 'hello',
   data () {
     return {
       items: {
-        song: '',
+        song: `C                   Dm
+  I follow the Moskva
+               C
+Down to Gorky Park
+                  Dm       Am7  G5
+Listening to the wind of chan______ge
+C                   Dm
+  An August summer night
+                  C
+Soldiers passing by
+                  Dm       Am7  G5
+Listening to the wind of chan______ge`,
         song_shifted: '',
         old_key: 'C',
         new_key: 'A',
@@ -62,7 +75,7 @@ export default {
   },
   methods: {
     startShift () {
-      this.song_shifted = transposeUserKeys(this.items.old_key, this.items.new_key, this.song)
+      this.items.song_shifted = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
     },
     formatInput () {
       // let inputArray = []
