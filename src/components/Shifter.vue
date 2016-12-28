@@ -39,18 +39,19 @@ export default {
   data () {
     return {
       items: {
-        song: `C                   Dm
-  I follow the Moskva
-               C
-Down to Gorky Park
-                  Dm       Am7  G5
-Listening to the wind of chan______ge
-C                   Dm
-  An August summer night
-                  C
-Soldiers passing by
-                  Dm       Am7  G5
-Listening to the wind of chan______ge`,
+//         song: `C                   Dm
+//   I follow the Moskva
+//                C
+// Down to Gorky Park
+//                   Dm       Am7  G5
+// Listening to the wind of chan______ge
+// C                   Dm
+//   An August summer night
+//                   C
+// Soldiers passing by
+//                   Dm       Am7  G5
+// Listening to the wind of chan______ge`,
+        song: 'C#',
         song_shifted: '',
         old_key: 'C',
         new_key: 'A',
