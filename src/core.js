@@ -1,22 +1,22 @@
 const keys = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
 const mainKeys = ['C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#', 'G', 'G#', 'Ab', 'A', 'A#', 'Bb', 'B']
 const compKeys = ['m', 'dim', 'aug', '6', '7', 'maj7', '9', 'add9', 'm6', 'm7', 'mmaj7', 'm9', '11', '7sus4', '13', '6add9', '5', '7-5', '7maj5', 'maj9', ' ']
-const specialKeys = ['C/D', 'G/V']
+const specialKeys = ['C/E', 'C/F', 'C/G', 'D/F', 'D/A', 'D/Bb', 'D/B', 'D/C', 'E/B', 'E/C', 'E/D', 'E/D', 'E/F', 'E/G', 'Em/B', 'Em/C', 'Em/D', 'Em/D', 'Em/F', 'Em/F', 'Em/G', 'Em/G', 'F/C', 'F/D', 'F/D', 'F/E', 'F/G', 'F/A', 'Fm/C', 'G/B', 'G/D', 'G/E', 'G/F', 'G/F', 'A/C', 'A/E', 'A/F', 'A/F', 'A/G', 'Am/C', 'Am/E', 'Am/F', 'Am/G']
 
 function generateAllKeys (mainKeys, compKeys, specialKeys) {
   let tempAllKeys = []
 
-  for (var i = mainKeys.length - 1; i >= 0; i--) {
-    for (var j = compKeys.length - 1; j >= 0; j--) {
+  for (let i = mainKeys.length - 1; i >= 0; i--) {
+    for (let j = compKeys.length - 1; j >= 0; j--) {
       tempAllKeys.push(mainKeys[i] + compKeys[j])
     }
   }
 
-  for (var k = mainKeys.length - 1; k >= 0; k--) {
+  for (let k = mainKeys.length - 1; k >= 0; k--) {
     tempAllKeys.push(mainKeys[k])
   }
 
-  for (var l = specialKeys.length - 1; l >= 0; l--) {
+  for (let l = specialKeys.length - 1; l >= 0; l--) {
     tempAllKeys.push(specialKeys[l])
   }
 
@@ -30,7 +30,7 @@ console.log(allKeys)
 function isChordLine (line) {
   let count = 0
 
-  for (var j = line.length - 1; j >= 0; j--) {
+  for (let j = line.length - 1; j >= 0; j--) {
     if (allKeys.includes(line[j])) {
       count = count + 1
     }
@@ -44,7 +44,7 @@ function isChordLine (line) {
 function splitSongInArrays (song) {
   song = song.split('\n')
 
-  for (var i = song.length - 1; i >= 0; i--) {
+  for (let i = song.length - 1; i >= 0; i--) {
     // transform extra spaces in one
     song[i] = song[i].replace(/\s\s+/g, ' ')
 
@@ -80,14 +80,14 @@ function removeDuplicates (arr) {
 }
 
 function generateKeyTones (key) {
-  var keyIndex = keys.indexOf(key)
-  var firstPart = keys.slice(0, keyIndex)
-  var secondPart = keys.slice(keyIndex, keys.length)
-  var newKeys = []
+  let keyIndex = keys.indexOf(key)
+  let firstPart = keys.slice(0, keyIndex)
+  let secondPart = keys.slice(keyIndex, keys.length)
+  let newKeys = []
 
   newKeys = secondPart
 
-  for (var i = 0; i < firstPart.length; i++) {
+  for (let i = 0; i < firstPart.length; i++) {
     newKeys.push(firstPart[i])
   }
 
@@ -121,14 +121,24 @@ function shiftNote (oldKey, newKey, oldNote) {
   return newNote
 }
 
+// function bemolToSharp (note) {
+//   for (let l = 0; l < note.length; l++) {
+//     if (note[i] === 'b') {
+//       let index =
+//     }
+//   }
+//   return note;
+// }
+
 export function shiftSong (oldkey, newKey, theSong) {
   let songArray = splitSongInArrays(theSong)
   let chordLines = []
   let lyricsLines = []
   let oldNotes = []
+  let newNotes = []
   let newSong = theSong.split('\n')
 
-  for (var i = songArray.length - 1; i >= 0; i--) {
+  for (let i = songArray.length - 1; i >= 0; i--) {
     console.log(isChordLine(songArray[i]))
     if (isChordLine(songArray[i])) {
       chordLines.push(i)
@@ -141,18 +151,27 @@ export function shiftSong (oldkey, newKey, theSong) {
   oldNotes = [].concat.apply([], oldNotes)
   oldNotes = removeDuplicates(oldNotes)
 
-  for (var k = 0; k <= newSong.length; k++) {
+  for (let k = 0; k <= newSong.length; k++) {
     if (chordLines.includes(k)) {
-      for (var m = oldNotes.length - 1; m >= 0; m--) {
-        var replace = oldNotes[m]
-        var re = new RegExp(replace, 'g')
+      for (let m = oldNotes.length - 1; m >= 0; m--) {
+        let replace = oldNotes[m]
+        let re = new RegExp(replace, 'g')
+
+        if (!newNotes.includes(shiftNote(oldkey, newKey, replace))) {
+          newNotes.push(shiftNote(oldkey, newKey, replace))
+        }
 
         newSong[k] = newSong[k].replace(re, shiftNote(oldkey, newKey, replace))
       }
     }
   }
 
-  return newSong.join('\n')
+  // return newSong.join('\n')
+  return {
+    'oldNotes': oldNotes,
+    'newNotes': newNotes,
+    'newSong': newSong.join('\n')
+  }
 }
 
 shiftSong('C', 'B', song)

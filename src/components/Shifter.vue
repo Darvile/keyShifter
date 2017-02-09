@@ -19,6 +19,13 @@
             <option v-for="key in items.keys">{{ key }}</option>
           </select>
           <button @click="startShift">Shift Song</button>
+
+          <h2>Old Notes</h2>
+          <p>{{ getOldNotes }}</p>
+
+          <h2>New Notes</h2>
+          <p>{{ getNewNotes }}</p>
+
         </div>
 
         <div class="col-md-5">
@@ -29,41 +36,33 @@
     </div>
   </div>
 </template>
-
+  
 <script>
-// import {transposeUserKeys} from '../core'
 import {shiftSong} from '../core'
-
 export default {
   name: 'hello',
   data () {
     return {
       items: {
-//         song: `C                   Dm
-//   I follow the Moskva
-//                C
-// Down to Gorky Park
-//                   Dm       Am7  G5
-// Listening to the wind of chan______ge
-// C                   Dm
-//   An August summer night
-//                   C
-// Soldiers passing by
-//                   Dm       Am7  G5
-// Listening to the wind of chan______ge`,
         song: 'C#',
         song_shifted: '',
+        old_notes: '',
         old_key: 'C',
         new_key: 'A',
         keys: ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
       }
     }
   },
-  // computed: {
-  //   song_shifted: function () {
-  //     // return this.song_shifted
-  //   }
-  // },
+  computed: {
+    getOldNotes () {
+      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+      return result.oldNotes
+    },
+    getNewNotes () {
+      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+      return result.newNotes
+    }
+  },
   created () {
     this.formatInput()
   },
@@ -76,7 +75,8 @@ export default {
   },
   methods: {
     startShift () {
-      this.items.song_shifted = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+      this.items.song_shifted = result.newSong
     },
     formatInput () {
       // let inputArray = []
