@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import './core'
+import './e6'
 
 /* eslint-disable no-new */
 new Vue({

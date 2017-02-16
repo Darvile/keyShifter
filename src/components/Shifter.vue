@@ -1,6 +1,6 @@
 <template>
   <div class="transposer">
-    <h1>Shifter</h1>
+    <h1>Key Shifter</h1>
     <div class="container">
       <div class="row">
         <div class="col-md-5">
@@ -21,10 +21,10 @@
           <button @click="startShift">Shift Song</button>
 
           <h2>Old Notes</h2>
-          <p>{{ getOldNotes }}</p>
+          <!-- <p>{{ getOldNotes }}</p> -->
 
           <h2>New Notes</h2>
-          <p>{{ getNewNotes }}</p>
+          <!-- <p>{{ getNewNotes }}</p> -->
 
         </div>
 
@@ -38,7 +38,7 @@
 </template>
   
 <script>
-import {shiftSong} from '../core'
+import KeyShifter from '../core'
 export default {
   name: 'hello',
   data () {
@@ -54,14 +54,14 @@ export default {
     }
   },
   computed: {
-    getOldNotes () {
-      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
-      return result.oldNotes
-    },
-    getNewNotes () {
-      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
-      return result.newNotes
-    }
+    // getOldNotes () {
+    //   let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+    //   return result.oldNotes
+    // },
+    // getNewNotes () {
+    //   let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+    //   return result.newNotes
+    // }
   },
   created () {
     this.formatInput()
@@ -75,8 +75,9 @@ export default {
   },
   methods: {
     startShift () {
-      let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
-      this.items.song_shifted = result.newSong
+      const keyShifter = new KeyShifter(this.items.old_key, this.items.new_key, this.items.song)
+      // let result = shiftSong(this.items.old_key, this.items.new_key, this.items.song)
+      this.items.song_shifted = keyShifter.init().newSong
     },
     formatInput () {
       // let inputArray = []
