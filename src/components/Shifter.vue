@@ -1,39 +1,52 @@
 <template>
   <div class="transposer">
     <h1>Key Shifter</h1>
+
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <div v-if="error_msg" class="alert alert-danger" role="alert">Please select the new key...</div>
+          <div v-if="old_key_error_msg" class="alert alert-danger" role="alert">Please select the original key...</div>
+          <div v-if="new_key_error_msg" class="alert alert-danger" role="alert">Please select the new key...</div>
         </div>
+        
         <div class="col-md-5">
           <label for="old-song">Paste your song or chords here:</label>
-          <textarea name="old-song" v-model="items.song" v-on:keyup="startShift" class="form-control"></textarea>
+          <textarea name="old-song" v-model="song" class="form-control"></textarea>
 
-          <h2>Old Notes</h2>
+          <h2>Old Chords</h2>
           <span style="margin-right: 5px;" v-for="oldNote in getOldNotes" class="label label-primary">{{ oldNote }}</span>
         </div>
 
         <div class="col-md-2">
           <label for="old-key">Original key</label>
-          <select name="old-key" class="form-control" v-model="items.old_key">
+          <select name="old-key" class="form-control" v-model="old_key">
             <option value="oldKey">Old key</option>
-            <option v-for="key in items.keys">{{ key }}</option>
+            <option v-for="key in keys">{{ key }}</option>
           </select>
 
           <label for="new-key">New key</label>
-          <select name="new-key" class="form-control" v-model="items.new_key">
+          <select name="new-key" class="form-control" v-model="new_key">
             <option value="newKey">New key</option>
-            <option v-for="key in items.keys">{{ key }}</option>
+            <option v-for="key in keys">{{ key }}</option>
           </select>
+          <div class="row">
+            <div class="col-md-4">
+              <button class="btn btn-default" @click="startShift">-</button>    
+            </div>
+            <div class="col-md-4"><p style="margin-top: 30px;">1/2tone</p></div>
+            <div class="col-md-4">
+              <button class="btn btn-default" @click="plusHalfTone">+</button>
+            </div>
+          </div>
+          
           <button class="btn btn-default" @click="startShift">Shift Song</button>
         </div>
 
         <div class="col-md-5">
           <label for="old-song">Shifted song</label>
-          <textarea name="old-song" v-model="items.song_shifted" class="form-control"></textarea>
+          <textarea name="old-song" v-model="song_shifted" class="form-control"></textarea>
 
-          <h2>New Notes</h2>
+          <h2>New Chords</h2>
           <span style="margin-right: 5px;" v-for="newNote in getNewNotes" class="label label-success">{{ newNote }}</span>
         </div>
       </div>
@@ -47,43 +60,110 @@ export default {
   name: 'Shifter',
   data () {
     return {
-      error_msg: false,
-      items: {
-        song: 'C#',
-        song_shifted: '',
-        old_notes: [],
-        new_notes: [],
-        old_key: 'oldKey',
-        new_key: 'newKey',
-        keys: ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
-      }
+      old_key_error_msg: false,
+      new_key_error_msg: false,
+      song: 'C#',
+      song_shifted: '',
+      old_chords: [],
+      new_chords: [],
+      old_key: 'oldKey',
+      new_key: 'newKey',
+      keys: ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
     }
   },
   computed: {
     getOldNotes () {
-      return this.items.old_notes
+      return this.old_chords
     },
     getNewNotes () {
-      return this.items.new_notes
+      return this.new_chords
+    }
+  },
+  watch: {
+    'this.new_key': {
+      handler: function (val, oldVal) {
+        console.log('change')
+        if (this.new_key !== 'newKey') {
+          this.error_msg = false
+        }
+      },
+      deep: true
     }
   },
   created () {
   },
   methods: {
-    startShift () {
-      const keyShifter = new KeyShifter(this.items.old_key, this.items.new_key, this.items.song)
+    plusHalfTone () {
+      if (this.old_key !== 'oldKey') {
+        this.old_key_error_msg = false
 
-      if (this.items.new_key !== 'newKey') {
-        this.items.song_shifted = keyShifter.init().newSong
-        this.items.old_notes = keyShifter.init().oldNotes
-        this.items.new_notes = keyShifter.init().newNotes
+        let plusKeyIndex = this.keys.indexOf(this.old_key) + 1
 
-        if (this.items.old_key === 'oldKey') {
-          this.items.old_key = this.items.old_notes[0]
+        if (plusKeyIndex < 11) {
+          this.old_key = this.keys[plusKeyIndex]
+          this.new_key = this.keys[plusKeyIndex + 1]
+        } else if (plusKeyIndex === 11) {
+          this.old_key = this.keys[11]
+          this.new_key = this.keys[0]
+        } else {
+          this.old_key = this.keys[0]
+          this.new_key = this.keys[1]
         }
-        this.error_msg = false
+
+        this.startShift()
       } else {
-        this.error_msg = true
+        this.old_key_error_msg = true
+      }
+    },
+    minusHalfTone () {
+      if (this.old_key !== 'oldKey') {
+        this.old_key_error_msg = false
+
+        let plusKeyIndex = this.keys.indexOf(this.old_key) - 1
+
+        if (plusKeyIndex < 11) {
+          this.old_key = this.keys[plusKeyIndex]
+          this.new_key = this.keys[plusKeyIndex + 1]
+        } else if (plusKeyIndex === 11) {
+          this.old_key = this.keys[11]
+          this.new_key = this.keys[0]
+        } else {
+          this.old_key = this.keys[0]
+          this.new_key = this.keys[1]
+        }
+
+        this.startShift()
+      } else {
+        this.old_key_error_msg = true
+      }
+    },
+    startShift (oldKey = this.old_key, newKey = this.new_key, song = this.song) {
+      console.log('old', oldKey)
+      console.log('new', newKey)
+      console.log('song', song)
+
+      const keyShifter = new KeyShifter(oldKey, newKey, song)
+
+      if (this.new_key !== 'newKey' && this.old_key !== 'oldKey') {
+        this.song_shifted = keyShifter.init().newSong
+        this.old_chords = keyShifter.init().oldChords
+        this.new_chords = keyShifter.init().newChords
+
+        this.old_key_error_msg = false
+        this.new_key_error_msg = false
+      } else {
+        if (this.old_key !== 'oldKey') {
+          this.old_key_error_msg = false
+        } else {
+          this.old_key_error_msg = true
+
+          return
+        }
+        if (this.new_key !== 'newKey') {
+          this.new_key_error_msg = false
+        } else {
+          this.new_key_error_msg = true
+        }
       }
     }
   }

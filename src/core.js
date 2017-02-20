@@ -67,6 +67,7 @@ export default class KeyShifter {
   _removeDuplicates (arr) {
     let s = new Set(arr)
     let it = s.values()
+
     return Array.from(it)
   }
 
@@ -116,30 +117,30 @@ export default class KeyShifter {
     let songArray = this._splitSongInArrays(this.theSong)
     let chordLines = []
     let lyricsLines = []
-    let oldNotes = []
-    let newNotes = []
+    let oldChords = []
+    let newChords = []
     let newSong = this.theSong.split('\n')
 
     for (let i = songArray.length - 1; i >= 0; i--) {
       if (this._isChordLine(songArray[i])) {
         chordLines.push(i)
-        oldNotes.push(songArray[i])
+        oldChords.push(songArray[i])
       } else {
         lyricsLines.push(i)
       }
     }
 
-    oldNotes = [].concat.apply([], oldNotes)
-    oldNotes = this._removeDuplicates(oldNotes)
+    oldChords = [].concat.apply([], oldChords)
+    oldChords = this._removeDuplicates(oldChords)
 
-    for (let k = 0; k <= newSong.length; k++) {
+    for (let k = newSong.length - 1; k >= 0; k--) {
       if (chordLines.includes(k)) {
-        for (let m = oldNotes.length - 1; m >= 0; m--) {
-          let replace = oldNotes[m]
+        for (let m = oldChords.length - 1; m >= 0; m--) {
+          let replace = oldChords[m]
           let re = new RegExp(replace, 'g')
 
-          if (!newNotes.includes(this._shiftNote(this.oldKey, this.newKey, replace))) {
-            newNotes.push(this._shiftNote(this.oldKey, this.newKey, replace))
+          if (!newChords.includes(this._shiftNote(this.oldKey, this.newKey, replace))) {
+            newChords.push(this._shiftNote(this.oldKey, this.newKey, replace))
           }
 
           newSong[k] = newSong[k].replace(re, this._shiftNote(this.oldKey, this.newKey, replace))
@@ -148,8 +149,8 @@ export default class KeyShifter {
     }
 
     return {
-      'oldNotes': oldNotes,
-      'newNotes': newNotes,
+      'oldChords': oldChords,
+      'newChords': newChords.reverse(),
       'newSong': newSong.join('\n')
     }
   }
