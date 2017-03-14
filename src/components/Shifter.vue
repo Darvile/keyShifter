@@ -29,7 +29,7 @@
             <option value="newKey">New key</option>
             <option v-for="key in keys">{{ key }}</option>
           </select>
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-4">
               <button class="btn btn-default" @click="startShift">-</button>    
             </div>
@@ -37,7 +37,7 @@
             <div class="col-md-4">
               <button class="btn btn-default" @click="plusHalfTone">+</button>
             </div>
-          </div>
+          </div> -->
           
           <button class="btn btn-default" @click="startShift">Shift Song</button>
         </div>
@@ -62,7 +62,18 @@ export default {
     return {
       old_key_error_msg: false,
       new_key_error_msg: false,
-      song: 'C#',
+      song: `          G              F
+Well, you only need the light 
+                   C
+When it’s burning low
+               G
+Only miss the sun 
+                      Am
+When it’s starts to snow
+               F
+Only know you love her 
+                  C  G
+When you let her go`,
       song_shifted: '',
       old_chords: [],
       new_chords: [],
@@ -138,10 +149,6 @@ export default {
       }
     },
     startShift (oldKey = this.old_key, newKey = this.new_key, song = this.song) {
-      console.log('old', oldKey)
-      console.log('new', newKey)
-      console.log('song', song)
-
       const keyShifter = new KeyShifter(oldKey, newKey, song)
 
       if (this.new_key !== 'newKey' && this.old_key !== 'oldKey') {
