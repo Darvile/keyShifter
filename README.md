@@ -1,6 +1,6 @@
 # key-shifter
 
-> A Vue.js project
+> Key Shifter is a program developed to help musicians to transpose song keys to different tones.
 
 ## Build Setup
 
